@@ -1,0 +1,493 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Lora:wght@500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #1D9E75; --teal-light: #E1F5EE; --teal-dark: #085041;
+    --amber: #BA7517; --amber-light: #FAEEDA; --amber-dark: #412402;
+    --coral: #D85A30; --coral-light: #FAECE7;
+    --blue-light: #E6F1FB; --blue: #185FA5;
+    --text: var(--color-text-primary); --text-muted: var(--color-text-secondary);
+    --bg: var(--color-background-primary); --bg2: var(--color-background-secondary); --bg3: var(--color-background-tertiary);
+    --border: var(--color-border-tertiary); --border2: var(--color-border-secondary);
+    --radius: var(--border-radius-md); --radius-lg: var(--border-radius-lg);
+  }
+
+  body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text); background: transparent; }
+
+  .app { display: flex; flex-direction: column; gap: 0; }
+
+  /* HEADER */
+  .header { padding: 1.5rem 1.5rem 1rem; border-bottom: 0.5px solid var(--border); }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon i { color: white; font-size: 18px; }
+  .logo-text { font-family: 'Lora', serif; font-size: 17px; font-weight: 600; color: var(--text); }
+  .logo-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; letter-spacing: 0.04em; }
+  .chain-badge { font-size: 11px; padding: 3px 10px; background: var(--teal-light); color: var(--teal-dark); border-radius: 20px; font-weight: 500; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 0; border-bottom: 0.5px solid var(--border); background: var(--bg); }
+  .tab { padding: 0.75rem 1.25rem; font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none; }
+  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .tab i { margin-right: 6px; font-size: 15px; vertical-align: -2px; }
+
+  /* PAGES */
+  .page { display: none; padding: 1.25rem 1.5rem; }
+  .page.active { display: block; }
+
+  /* FORM SECTION */
+  .section-title { font-size: 13px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .field input { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; padding: 7px 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); outline: none; }
+  .field input:focus { border-color: var(--teal); }
+  .field.full { grid-column: 1 / -1; }
+
+  .input-prefix { position: relative; }
+  .input-prefix span { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--text-muted); }
+  .input-prefix input { padding-left: 30px; }
+
+  .divider { border: none; border-top: 0.5px solid var(--border); margin: 1rem 0; }
+
+  /* RESULT CARD */
+  .result-banner { background: var(--teal-light); border: 0.5px solid #5DCAA5; border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-top: 1rem; }
+  .result-label { font-size: 12px; color: var(--teal-dark); font-weight: 500; margin-bottom: 4px; }
+  .result-row { display: flex; align-items: baseline; justify-content: space-between; }
+  .result-amount { font-family: 'Lora', serif; font-size: 28px; font-weight: 600; color: var(--teal-dark); }
+  .result-period { font-size: 12px; color: var(--teal); }
+  .result-meta { display: flex; gap: 12px; margin-top: 0.5rem; }
+  .result-pill { font-size: 11px; padding: 2px 8px; background: white; border: 0.5px solid #9FE1CB; border-radius: 20px; color: var(--teal-dark); }
+
+  .cap-bar { margin-top: 0.75rem; }
+  .cap-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--teal-dark); margin-bottom: 4px; }
+  .cap-bar-track { height: 6px; background: #9FE1CB; border-radius: 3px; overflow: hidden; }
+  .cap-bar-fill { height: 100%; background: var(--teal); border-radius: 3px; transition: width 0.4s; }
+
+  /* BREAKDOWN */
+  .breakdown-list { display: flex; flex-direction: column; gap: 6px; margin-top: 0.75rem; }
+  .breakdown-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--bg2); border-radius: var(--radius); }
+  .breakdown-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .breakdown-name { font-size: 13px; flex: 1; }
+  .breakdown-pct { font-size: 11px; color: var(--text-muted); margin-right: 8px; }
+  .breakdown-amt { font-size: 13px; font-weight: 500; }
+
+  /* BUTTON */
+  .btn { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 9px 18px; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border: 0.5px solid var(--border2); background: var(--bg); color: var(--text); }
+  .btn:hover { background: var(--bg2); }
+  .btn-primary { background: var(--teal); color: white; border-color: var(--teal); }
+  .btn-primary:hover { background: var(--teal-dark); border-color: var(--teal-dark); }
+  .btn-row { display: flex; gap: 8px; margin-top: 1rem; }
+
+  /* DASHBOARD */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem; }
+  .stat-card { background: var(--bg2); border-radius: var(--radius); padding: 0.75rem 1rem; }
+  .stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .stat-value { font-size: 18px; font-weight: 500; }
+  .stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .month-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+  .month-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 0.5px solid var(--border); }
+  .month-title { font-size: 13px; font-weight: 500; }
+  .month-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; }
+  .badge-verified { background: var(--teal-light); color: var(--teal-dark); }
+  .badge-pending { background: var(--amber-light); color: var(--amber-dark); }
+  .month-body { padding: 0.75rem 1rem; }
+  .month-amount { font-family: 'Lora', serif; font-size: 22px; font-weight: 600; margin-bottom: 2px; }
+  .month-per { font-size: 12px; color: var(--text-muted); margin-bottom: 0.75rem; }
+
+  .mini-bars { display: flex; flex-direction: column; gap: 5px; }
+  .mini-bar-row { display: flex; align-items: center; gap: 8px; }
+  .mini-bar-label { font-size: 11px; color: var(--text-muted); width: 80px; flex-shrink: 0; }
+  .mini-bar-track { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+  .mini-bar-fill { height: 100%; border-radius: 2px; }
+  .mini-bar-pct { font-size: 11px; color: var(--text-muted); width: 28px; text-align: right; }
+
+  .tx-hash { font-size: 10px; color: var(--text-muted); font-family: monospace; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 0.5px solid var(--border); display: flex; align-items: center; gap: 6px; }
+  .tx-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; flex-shrink: 0; }
+
+  /* VERIFY PAGE */
+  .verify-box { background: var(--bg2); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .verify-title { font-size: 13px; font-weight: 500; margin-bottom: 0.75rem; }
+  .verify-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+  .verify-row:last-child { border-bottom: none; }
+  .verify-key { color: var(--text-muted); }
+  .verify-val { font-weight: 500; font-family: monospace; font-size: 11px; }
+  .verify-val.green { color: var(--teal); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; }
+
+  .info-box { background: var(--blue-light); border: 0.5px solid #B5D4F4; border-radius: var(--radius); padding: 0.75rem 1rem; font-size: 12px; color: #0C447C; display: flex; gap: 8px; }
+  .info-box i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .empty-state { text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 13px; }
+  .empty-state i { font-size: 32px; display: block; margin-bottom: 0.5rem; opacity: 0.4; }
+</style>
+
+<h2 class="sr-only">Aplikasi Transparansi Keuangan Pesantren berbasis Blockchain</h2>
+
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">
+        <div class="logo-icon"><i class="ti ti-shield-check" aria-hidden="true"></i></div>
+        <div>
+          <div class="logo-text">Amanah Transparan</div>
+          <div class="logo-sub">Sistem Keuangan Pesantren On-Chain</div>
+        </div>
+      </div>
+      <span class="chain-badge">⬡ Testnet</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showPage('input')" id="tab-input">
+      <i class="ti ti-edit" aria-hidden="true"></i>Input Biaya
+    </button>
+    <button class="tab" onclick="showPage('dashboard')" id="tab-dashboard">
+      <i class="ti ti-chart-bar" aria-hidden="true"></i>Dashboard
+    </button>
+    <button class="tab" onclick="showPage('verify')" id="tab-verify">
+      <i class="ti ti-lock" aria-hidden="true"></i>Verifikasi
+    </button>
+  </div>
+
+  <!-- PAGE: INPUT -->
+  <div class="page active" id="page-input">
+    <p class="section-title">INFORMASI PESANTREN</p>
+    <div class="field-grid">
+      <div class="field full">
+        <label>Nama Pesantren</label>
+        <input type="text" id="nama" placeholder="PP. Al-Barokah" value="PP. Al-Barokah">
+      </div>
+      <div class="field">
+        <label>Jumlah Santri Aktif</label>
+        <input type="number" id="jumlah" placeholder="1500" value="1500" oninput="hitung()">
+      </div>
+      <div class="field">
+        <label>Bulan</label>
+        <input type="month" id="bulan" value="2026-05">
+      </div>
+    </div>
+
+    <hr class="divider">
+    <p class="section-title">RINCIAN BIAYA BULAN INI (Rp)</p>
+
+    <div class="field-grid">
+      <div class="field">
+        <label>Tenaga Pendidik</label>
+        <div class="input-prefix"><span>Rp</span>
+          <input type="number" id="b1" value="163500000" oninput="hitung()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Pengurus Pondok</label>
+        <div class="input-prefix"><span>Rp</span>
+          <input type="number" id="b2" value="102600000" oninput="hitung()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Konsumsi Santri</label>
+        <div class="input-prefix"><span>Rp</span>
+          <input type="number" id="b3" value="1125000000" oninput="hitung()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Utilitas & Fasilitas</label>
+        <div class="input-prefix"><span>Rp</span>
+          <input type="number" id="b4" value="118000000" oninput="hitung()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Perlengkapan Belajar</label>
+        <div class="input-prefix"><span>Rp</span>
+          <input type="number" id="b5" value="35500000" oninput="hitung()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Kegiatan & Lain-lain</label>
+        <div class="input-prefix"><span>Rp</span>
+          <input type="number" id="b6" value="95000000" oninput="hitung()">
+        </div>
+      </div>
+    </div>
+
+    <div class="field-grid">
+      <div class="field">
+        <label>Batas Maksimal SPP (Cap)</label>
+        <div class="input-prefix"><span>Rp</span>
+          <input type="number" id="cap" value="1500000" oninput="hitung()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Reserve Fund (%)</label>
+        <input type="number" id="reserve" value="7" min="0" max="20" oninput="hitung()">
+      </div>
+    </div>
+
+    <div class="result-banner" id="result-banner">
+      <div class="result-label">SPP Per Santri Bulan Ini</div>
+      <div class="result-row">
+        <div class="result-amount" id="res-amount">Rp 1.234.000</div>
+        <div class="result-period">/ santri / bulan</div>
+      </div>
+      <div class="result-meta">
+        <span class="result-pill" id="res-total">Total: Rp 0</span>
+        <span class="result-pill" id="res-cap-status">✓ Di bawah batas</span>
+      </div>
+      <div class="cap-bar">
+        <div class="cap-bar-label">
+          <span id="res-pct-label">0% dari batas maksimal</span>
+          <span id="res-cap-label">Cap: Rp 1.500.000</span>
+        </div>
+        <div class="cap-bar-track">
+          <div class="cap-bar-fill" id="cap-bar-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="breakdown-list" id="breakdown-list"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="simpanData()">
+        <i class="ti ti-upload" aria-hidden="true"></i> Simpan & Rekam On-Chain
+      </button>
+      <button class="btn" onclick="resetForm()">Reset</button>
+    </div>
+  </div>
+
+  <!-- PAGE: DASHBOARD -->
+  <div class="page" id="page-dashboard">
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Rekaman</div>
+        <div class="stat-value" id="stat-records">0</div>
+        <div class="stat-sub">bulan tercatat</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rata-rata SPP</div>
+        <div class="stat-value" id="stat-avg">Rp 0</div>
+        <div class="stat-sub">per santri</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Terkelola</div>
+        <div class="stat-value" id="stat-total">Rp 0</div>
+        <div class="stat-sub">semua bulan</div>
+      </div>
+    </div>
+
+    <div id="records-list">
+      <div class="empty-state">
+        <i class="ti ti-database-off" aria-hidden="true"></i>
+        Belum ada data. Masukkan biaya di tab Input terlebih dahulu.
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: VERIFY -->
+  <div class="page" id="page-verify">
+    <div class="info-box" style="margin-bottom:1rem">
+      <i class="ti ti-info-circle" aria-hidden="true"></i>
+      <div>Setiap data yang disimpan menghasilkan hash unik yang dapat diverifikasi siapapun di blockchain explorer. Data tidak dapat diubah setelah tersimpan.</div>
+    </div>
+
+    <div id="verify-list">
+      <div class="empty-state">
+        <i class="ti ti-shield-off" aria-hidden="true"></i>
+        Belum ada transaksi. Simpan data biaya terlebih dahulu.
+      </div>
+    </div>
+
+    <div style="margin-top:1rem; padding-top:1rem; border-top:0.5px solid var(--border);">
+      <p class="section-title">SMART CONTRACT (TESTNET)</p>
+      <div class="verify-box" style="margin-bottom:0">
+        <div class="verify-row"><span class="verify-key">Network</span><span class="verify-val green">Polygon Amoy Testnet</span></div>
+        <div class="verify-row"><span class="verify-key">Contract Address</span><span class="verify-val">0x742d35...4a2F</span></div>
+        <div class="verify-row"><span class="verify-key">Status</span><span class="verify-val green">● Aktif (Simulasi)</span></div>
+        <div class="verify-row"><span class="verify-key">Fungsi</span><span class="verify-val">inputBudget / getBudget</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLORS = ['#1D9E75','#BA7517','#D85A30','#185FA5','#639922','#993556'];
+const LABELS = ['Tenaga Pendidik','Pengurus Pondok','Konsumsi Santri','Utilitas & Fasilitas','Perlengkapan','Kegiatan & Lainnya'];
+let records = [];
+
+function fmt(n) {
+  return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+}
+function fmtShort(n) {
+  if(n >= 1e9) return 'Rp ' + (n/1e9).toFixed(1) + 'M';
+  if(n >= 1e6) return 'Rp ' + Math.round(n/1e6) + 'jt';
+  return 'Rp ' + Math.round(n/1e3) + 'rb';
+}
+function randHash() {
+  return '0x' + Array.from({length:8}, () => Math.floor(Math.random()*16).toString(16)).join('') + '...' + Array.from({length:4}, () => Math.floor(Math.random()*16).toString(16)).join('');
+}
+
+function getBiaya() {
+  return [
+    parseFloat(document.getElementById('b1').value)||0,
+    parseFloat(document.getElementById('b2').value)||0,
+    parseFloat(document.getElementById('b3').value)||0,
+    parseFloat(document.getElementById('b4').value)||0,
+    parseFloat(document.getElementById('b5').value)||0,
+    parseFloat(document.getElementById('b6').value)||0,
+  ];
+}
+
+function hitung() {
+  const biaya = getBiaya();
+  const santri = parseFloat(document.getElementById('jumlah').value)||1500;
+  const reservePct = parseFloat(document.getElementById('reserve').value)||7;
+  const cap = parseFloat(document.getElementById('cap').value)||1500000;
+
+  const subtotal = biaya.reduce((a,b)=>a+b,0);
+  const reserveAmt = subtotal * (reservePct/100);
+  const total = subtotal + reserveAmt;
+  const perSantri = total / santri;
+
+  const pct = Math.min(100, Math.round((perSantri/cap)*100));
+  const overCap = perSantri > cap;
+
+  document.getElementById('res-amount').textContent = fmt(perSantri);
+  document.getElementById('res-total').textContent = 'Total: ' + fmtShort(total);
+  document.getElementById('res-cap-status').textContent = overCap ? '⚠ Melebihi batas' : '✓ Di bawah batas';
+  document.getElementById('res-cap-status').style.background = overCap ? '#FAECE7' : '';
+  document.getElementById('res-cap-status').style.color = overCap ? '#993C1D' : '';
+  document.getElementById('res-pct-label').textContent = pct + '% dari batas maksimal';
+  document.getElementById('res-cap-label').textContent = 'Cap: ' + fmt(cap);
+  document.getElementById('cap-bar-fill').style.width = pct + '%';
+  document.getElementById('cap-bar-fill').style.background = overCap ? '#D85A30' : '#1D9E75';
+
+  const breakdownEl = document.getElementById('breakdown-list');
+  breakdownEl.innerHTML = '';
+  biaya.forEach((b, i) => {
+    if(b === 0) return;
+    const p = total > 0 ? Math.round((b/total)*100) : 0;
+    const div = document.createElement('div');
+    div.className = 'breakdown-item';
+    div.innerHTML = `
+      <div class="breakdown-dot" style="background:${COLORS[i]}" aria-hidden="true"></div>
+      <span class="breakdown-name">${LABELS[i]}</span>
+      <span class="breakdown-pct">${p}%</span>
+      <span class="breakdown-amt">${fmtShort(b)}</span>`;
+    breakdownEl.appendChild(div);
+  });
+}
+
+function simpanData() {
+  const biaya = getBiaya();
+  const santri = parseFloat(document.getElementById('jumlah').value)||1500;
+  const reservePct = parseFloat(document.getElementById('reserve').value)||7;
+  const cap = parseFloat(document.getElementById('cap').value)||1500000;
+  const nama = document.getElementById('nama').value || 'Pesantren';
+  const bulan = document.getElementById('bulan').value || '2026-05';
+
+  const subtotal = biaya.reduce((a,b)=>a+b,0);
+  const total = subtotal * (1 + reservePct/100);
+  const perSantri = total / santri;
+  const hash = randHash();
+  const ts = Date.now();
+
+  records.unshift({ biaya, santri, total, perSantri, cap, nama, bulan, hash, ts, reservePct });
+  renderDashboard();
+  renderVerify();
+  showPage('dashboard');
+  alert('✓ Data berhasil disimpan!\nHash: ' + hash + '\n\nDi versi mainnet, data ini akan tercatat permanen di blockchain.');
+}
+
+function renderDashboard() {
+  document.getElementById('stat-records').textContent = records.length;
+  if(records.length === 0) {
+    document.getElementById('stat-avg').textContent = 'Rp 0';
+    document.getElementById('stat-total').textContent = 'Rp 0';
+    document.getElementById('records-list').innerHTML = '<div class="empty-state"><i class="ti ti-database-off" aria-hidden="true"></i>Belum ada data.</div>';
+    return;
+  }
+
+  const avgSPP = records.reduce((a,r)=>a+r.perSantri,0)/records.length;
+  const grandTotal = records.reduce((a,r)=>a+r.total,0);
+  document.getElementById('stat-avg').textContent = fmtShort(avgSPP);
+  document.getElementById('stat-total').textContent = fmtShort(grandTotal);
+
+  const container = document.getElementById('records-list');
+  container.innerHTML = '';
+  records.forEach((r, idx) => {
+    const totalBiaya = r.biaya.reduce((a,b)=>a+b,0);
+    const barsHTML = r.biaya.map((b,i) => {
+      const p = totalBiaya > 0 ? Math.round((b/totalBiaya)*100) : 0;
+      if(b === 0) return '';
+      return `<div class="mini-bar-row">
+        <span class="mini-bar-label">${LABELS[i].split(' ')[0]}${LABELS[i].split(' ')[1]?' '+LABELS[i].split(' ')[1]:''}</span>
+        <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${p}%;background:${COLORS[i]}"></div></div>
+        <span class="mini-bar-pct">${p}%</span>
+      </div>`;
+    }).join('');
+
+    const overCap = r.perSantri > r.cap;
+    const card = document.createElement('div');
+    card.className = 'month-card';
+    card.innerHTML = `
+      <div class="month-header">
+        <span class="month-title">${r.nama} — ${r.bulan}</span>
+        <span class="month-badge ${overCap?'badge-pending':'badge-verified'}">${overCap?'⚠ Melebihi Cap':'✓ Terverifikasi'}</span>
+      </div>
+      <div class="month-body">
+        <div class="month-amount">${fmt(r.perSantri)}</div>
+        <div class="month-per">per santri · ${r.santri.toLocaleString('id-ID')} santri · Total ${fmtShort(r.total)}</div>
+        <div class="mini-bars">${barsHTML}</div>
+        <div class="tx-hash"><div class="tx-dot" aria-hidden="true"></div>TX: ${r.hash}</div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function renderVerify() {
+  const container = document.getElementById('verify-list');
+  if(records.length === 0) {
+    container.innerHTML = '<div class="empty-state"><i class="ti ti-shield-off" aria-hidden="true"></i>Belum ada transaksi.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  records.forEach((r) => {
+    const d = new Date(r.ts);
+    const box = document.createElement('div');
+    box.className = 'verify-box';
+    box.innerHTML = `
+      <div class="verify-title">${r.bulan} — ${r.nama}</div>
+      <div class="verify-row"><span class="verify-key">TX Hash</span><span class="verify-val">${r.hash}</span></div>
+      <div class="verify-row"><span class="verify-key">Timestamp</span><span class="verify-val">${d.toLocaleString('id-ID')}</span></div>
+      <div class="verify-row"><span class="verify-key">Total Biaya</span><span class="verify-val">${fmt(r.total)}</span></div>
+      <div class="verify-row"><span class="verify-key">SPP Per Santri</span><span class="verify-val green">${fmt(r.perSantri)}</span></div>
+      <div class="verify-row"><span class="verify-key">Status</span><span class="verify-val green">● Recorded (Simulasi)</span></div>`;
+    container.appendChild(box);
+  });
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+function resetForm() {
+  document.getElementById('b1').value = 163500000;
+  document.getElementById('b2').value = 102600000;
+  document.getElementById('b3').value = 1125000000;
+  document.getElementById('b4').value = 118000000;
+  document.getElementById('b5').value = 35500000;
+  document.getElementById('b6').value = 95000000;
+  document.getElementById('jumlah').value = 1500;
+  document.getElementById('cap').value = 1500000;
+  document.getElementById('reserve').value = 7;
+  hitung();
+}
+
+hitung();
+</script>
